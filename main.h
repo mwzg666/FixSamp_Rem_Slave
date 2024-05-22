@@ -68,6 +68,10 @@ typedef struct
     WORD  SampTime;     // 取样时间
     float SampVol;      // 取样体积
     float SampFlow[CHANNLE_NUM];  // 取样流量
+
+    float Channel_SampFlowVol[CHANNLE_NUM];      // 各通道参数
+    BYTE  Channel_SampMode[CHANNLE_NUM];     // 各通道取样模式
+    
     
     DWORD TotleTime; 
     float TotleFlow;
@@ -75,8 +79,8 @@ typedef struct
     BYTE  AlarmThres;   // 报警阈值：%
 
     BYTE  Enable;       // 通道使能：1位指示一个通道
+    BYTE  ChModeCtl;    // 在各模式下通道单独控制状态
     
-    //bool  Valve[CHANNLE_NUM];        // 电磁阀
     bool  RemCtlFlag;               //远程控制标志
             
     WORD  Sum;
@@ -85,7 +89,7 @@ typedef struct
 typedef struct
 {
     bool  Running;
-    DWORD RunTime;
+    DWORD RunTime[9];
     float Flow[CHANNLE_NUM];
     float Volume[CHANNLE_NUM];   // 取样体积 
     float TotleFlow;            // 总流量
@@ -136,6 +140,7 @@ REM_REGADDR;
 #define VALVE_6           11
 #define VALVE_7           12
 
+#define MODE_NOCHANNEL 0           // 定时取样 
 #define MODE_TIME  1                // 定时取样 
 #define MODE_VOL   2                // 定量取样
 #define MODE_MAN   3                // 手动取样
@@ -213,10 +218,9 @@ extern BYTE RemAckOut;
 extern u16 RemAckTimout;
 extern BYTE PageSwitch;
 
-extern BYTE Remchenable[CHANNLE_NUM];
-extern BOOL Remchflag[CHANNLE_NUM];
+extern BYTE xdata Remchenable[CHANNLE_NUM];
+extern BOOL xdata Remchflag[CHANNLE_NUM];
 extern WORD Remchtim;
-
 
 void WriteParam();
 void Delay(WORD ms);
@@ -255,6 +259,7 @@ void DumpCmd(BYTE *dat, BYTE len);
 void RemCtlTask();
 
 void RemPageCtl();
+void CheckModeStop();
 
 
 #endif

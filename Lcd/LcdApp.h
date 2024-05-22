@@ -45,6 +45,35 @@
 #define REG_MODE_TXT 0x4010
 #define REG_SP_RET    0x4020
 
+#define REG_SYS_CHANNEL  0x4030   //各通道参数起始地址
+#define REG_SP_CHANNEL1  0x4030
+#define REG_SP_CHANNEL2  0x4031
+#define REG_SP_CHANNEL3  0x4032
+#define REG_SP_CHANNEL4  0x4033
+#define REG_SP_CHANNEL5  0x4034
+#define REG_SP_CHANNEL6  0x4035
+#define REG_SP_CHANNEL7  0x4036
+#define REG_SP_CHANNEL8  0x4037
+
+#define REG_SP_CHANNEL1_MODE	0x4038	// 各通道下拉菜单
+#define REG_SP_CHANNEL2_MODE 0x4039
+#define REG_SP_CHANNEL3_MODE 0x403A
+#define REG_SP_CHANNEL4_MODE 0x403B
+#define REG_SP_CHANNEL5_MODE 0x403C
+#define REG_SP_CHANNEL6_MODE 0x403D
+#define REG_SP_CHANNEL7_MODE 0x403E
+#define REG_SP_CHANNEL8_MODE 0x403F
+
+#define  REG_SP_CHANNEL1_MODETXT   	0x4040	// 各通道显示取样模式
+#define  REG_SP_CHANNEL2_MODETXT	0x4048
+#define  REG_SP_CHANNEL3_MODETXT	0x4050
+#define  REG_SP_CHANNEL4_MODETXT	0x4058
+#define  REG_SP_CHANNEL5_MODETXT	0x4060
+#define  REG_SP_CHANNEL6_MODETXT	0x4068
+#define  REG_SP_CHANNEL7_MODETXT	0x4070
+#define  REG_SP_CHANNEL8_MODETXT	0x4078
+
+
 #define REG_SP_VALVE1  0x4500       //远程控制显示(8个通道)
 #define REG_SP_VALVE2  0x4501
 #define REG_SP_VALVE3  0x4502
@@ -67,17 +96,6 @@
 #define REG_IO_FAN      0x5005
 #define REG_IO_EMSTOP   0x5006
 #define REG_IO_TEMP     0x5007
-//电磁阀控制
-//#define REG_IO_VALVE0   0x5008
-//#define REG_IO_VALVE1   0x5009
-//#define REG_IO_VALVE2   0x500A
-//#define REG_IO_VALVE3   0x500B
-//#define REG_IO_VALVE4   0x500C
-//#define REG_IO_VALVE5   0x500D
-//#define REG_IO_VALVE6   0x500E
-//#define REG_IO_VALVE7   0x500F
-
-
 
 // 关于界面
 #define REG_DEV_TYPE  0x7000    // 设备型号
@@ -125,9 +143,14 @@ typedef struct
     WORD ChOnOff;    // 使用低8位，1位指示一个通道
     WORD res;
     char ModeTxt[16];  // 取样模式
-    //WORD Valve[CHANNLE_NUM];
 }SHOW_PARAM;
 
+typedef struct
+{
+	WORD ChannelParm[CHANNLE_NUM];
+    WORD ChannelMode[8];
+    char ChannelModeTxt[8][16];
+}CHANNEL_PARAM;
 
 typedef struct
 {
@@ -159,6 +182,8 @@ void EnterPage(BYTE Page);
 void ShowFlow();
 void ShowStatus();
 void SendParam();
+void SendChannelParam();
+
 void ShowDevInfo();
 void SetStartBtn(BYTE s);
 void StatusColor(bool force);

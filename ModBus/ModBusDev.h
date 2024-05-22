@@ -11,6 +11,7 @@ typedef struct
 {
     WORD  Addr;
     WORD  ChEnable;
+    WORD  ChModeCtl;
     WORD  RemCtlFlag;
     WORD  RunStatus;
     WORD  Alarm[8];

@@ -1,4 +1,4 @@
-C251 COMPILER V5.60.0,  ModBusDev                                                          22/03/24  16:36:51  PAGE 1   
+C251 COMPILER V5.60.0,  ModBusDev                                                          22/05/24  17:23:32  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE ModBusDev
@@ -66,7 +66,7 @@ stmt  level    source
    55          void PackageDWordValue(WORD Offset, DWORD val)
    56          {
    57   1          DWORD temp;
-C251 COMPILER V5.60.0,  ModBusDev                                                          22/03/24  16:36:51  PAGE 2   
+C251 COMPILER V5.60.0,  ModBusDev                                                          22/05/24  17:23:32  PAGE 2   
 
    58   1          temp = SwEndian(val);
    59   1          memcpy(&DevReadAck.Data[Offset], &temp, 4);  
@@ -134,7 +134,7 @@ stmt  level    source
   121   1          DevReadAck.Data[i]  = (BYTE)(crc);
   122   1          DevReadAck.Data[i+1] = (BYTE)(crc>>8);
   123   1          SendLen += 2;  
-C251 COMPILER V5.60.0,  ModBusDev                                                          22/03/24  16:36:51  PAGE 3   
+C251 COMPILER V5.60.0,  ModBusDev                                                          22/05/24  17:23:32  PAGE 3   
 
   124   1          Uart4Send((BYTE *)&DevReadAck, (BYTE)SendLen);
   125   1          return true;
@@ -164,7 +164,7 @@ stmt  level    source
   149   1          BYTE i = 0;
   150   1          RemRegAddr.SypAddr = ModBusParam.Addr;
   151   1          SysParam.Enable = ModBusParam.ChEnable;
-  152   1              
+  152   1          SysParam.ChModeCtl = ModBusParam.ChModeCtl;
   153   1          SysParam.RemCtlFlag = ModBusParam.RemCtlFlag;
   154   1          RemRunStatus.RemRun= ModBusParam.RunStatus; 
   155   1          //SysParam.Address = ModBusParam.Address;
@@ -202,7 +202,7 @@ stmt  level    source
   187          // Éè¼Ä´æÆ÷Öµ
   188          void SetRegValue()
   189          {
-C251 COMPILER V5.60.0,  ModBusDev                                                          22/03/24  16:36:51  PAGE 4   
+C251 COMPILER V5.60.0,  ModBusDev                                                          22/05/24  17:23:32  PAGE 4   
 
   190   1          if (RecvFrame.Data[0] == 0)
   191   1          {
@@ -243,12 +243,12 @@ stmt  level    source
 
 Module Information          Static   Overlayable
 ------------------------------------------------
-  code size            =       944     ------
+  code size            =       954     ------
   ecode size           =    ------     ------
   data size            =    ------     ------
   idata size           =    ------     ------
   pdata size           =    ------     ------
-  xdata size           =       585     ------
+  xdata size           =       587     ------
   xdata-const size     =    ------     ------
   edata size           =        64     ------
   bit size             =    ------     ------

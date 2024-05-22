@@ -149,7 +149,7 @@ void ModBusSaveParam()
     BYTE i = 0;
     RemRegAddr.SypAddr = ModBusParam.Addr;
     SysParam.Enable = ModBusParam.ChEnable;
-	
+    SysParam.ChModeCtl = ModBusParam.ChModeCtl;
     SysParam.RemCtlFlag = ModBusParam.RemCtlFlag;
     RemRunStatus.RemRun= ModBusParam.RunStatus; 
     //SysParam.Address = ModBusParam.Address;

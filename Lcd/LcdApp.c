@@ -16,6 +16,8 @@
 BYTE xdata TempBuf[TEMP_BUF_LEN] = {0};
 
 SHOW_PARAM xdata ShowParam;
+CHANNEL_PARAM xdata ChannelParam;
+
 RUN_INFO xdata RunInfo;
 DEV_INFO xdata DevInfo;
 
@@ -43,16 +45,11 @@ WORD code TxtColor[5] =
 
 char code ModeText[4][16]=
 {   
-    "",
+    "不单独取样",
     "定时取样",
     "定量取样",
     "手动取样"
 };
-
-
-
-
-
 void ShowDevInfo()
 {
     BYTE i,Cnt = 0;;
@@ -242,7 +239,7 @@ void SetRunTime(DWORD tm)
 
 void ShowFlow()
 {
-    SetRunTime(RunStatus.RunTime);  // 运行时长
+    SetRunTime(RunStatus.RunTime[8]);  // 运行时长
     LcdCmd(LCD_CMD_WRITE, REG_CH_FLOW, (BYTE *)&RunInfo, sizeof(RUN_INFO));
 }
 
@@ -290,10 +287,10 @@ void ShowRemCh()
 void SendParam()
 {
     BYTE i;
+    
     for (i=0;i<CHANNLE_NUM;i++)
     {
         ShowParam.Flow[i] = SwWord((WORD)(SysParam.SampFlow[i]*10));
-        //ShowParam.Valve[i] = SwWord(SysParam.Valve[i]);
     }
     ShowParam.Address = SwWord((WORD)SysParam.Address);
     ShowParam.SampTime = SwWord((WORD)SysParam.SampTime);
@@ -309,6 +306,24 @@ void SendParam()
     LcdCmd(LCD_CMD_WRITE, REG_SYS_PARAM, (BYTE *)&ShowParam, sizeof(SHOW_PARAM));
 }
 
+void SendChannelParam()
+{
+    BYTE i;
+    
+    for (i=0;i<CHANNLE_NUM;i++)
+    {
+        
+		memset(ChannelParam.ChannelModeTxt[i],0,16);
+        ChannelParam.ChannelMode[i] = SwWord((WORD)(SysParam.Channel_SampMode[i]));
+        
+        ChannelParam.ChannelParm[i] = SwWord((WORD)(SysParam.Channel_SampFlowVol[i]*10));
+		
+    	sprintf(ChannelParam.ChannelModeTxt[i], ModeText[SysParam.Channel_SampMode[i]]);
+    }
+    LcdCmd(LCD_CMD_WRITE, REG_SYS_CHANNEL, (BYTE *)&ChannelParam, sizeof(CHANNEL_PARAM));
+}
+
+
 
 // 设置界面显示取样模式
 void SetSampMode()
@@ -319,6 +334,66 @@ void SetSampMode()
     LcdCmd(LCD_CMD_WRITE, REG_MODE_TXT, TempBuf, 16);
 }
 
+void SetChannel1Mode()
+{
+	SysParam.Channel_SampMode[0] = (BYTE)PopWord();
+    memset((char *)TempBuf,0,TEMP_BUF_LEN);
+    sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[0]]);
+	LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL1_MODETXT, TempBuf, 16);
+}
+void SetChannel2Mode()
+{
+	SysParam.Channel_SampMode[1] = (BYTE)PopWord();
+    memset((char *)TempBuf,0,TEMP_BUF_LEN);
+    sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[1]]);
+	LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL2_MODETXT, TempBuf, 16);
+}
+
+void SetChannel3Mode()
+{
+	SysParam.Channel_SampMode[2] = (BYTE)PopWord();
+    memset((char *)TempBuf,0,TEMP_BUF_LEN);
+    sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[2]]);
+	LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL3_MODETXT, TempBuf, 16);
+}
+void SetChannel4Mode()
+{
+	SysParam.Channel_SampMode[3] = (BYTE)PopWord();
+    memset((char *)TempBuf,0,TEMP_BUF_LEN);
+    sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[3]]);
+	LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL4_MODETXT, TempBuf, 16);
+}
+
+void SetChannel5Mode()
+{
+	SysParam.Channel_SampMode[4] = (BYTE)PopWord();
+    memset((char *)TempBuf,0,TEMP_BUF_LEN);
+    sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[4]]);
+	LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL5_MODETXT, TempBuf, 16);
+}
+void SetChannel6Mode()
+{
+	SysParam.Channel_SampMode[5] = (BYTE)PopWord();
+    memset((char *)TempBuf,0,TEMP_BUF_LEN);
+    sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[5]]);
+	LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL6_MODETXT, TempBuf, 16);
+}
+
+void SetChannel7Mode()
+{
+	SysParam.Channel_SampMode[6] = (BYTE)PopWord();
+    memset((char *)TempBuf,0,TEMP_BUF_LEN);
+    sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[6]]);
+	LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL7_MODETXT, TempBuf, 16);
+}
+
+void SetChannel8Mode()
+{
+	SysParam.Channel_SampMode[7] = (BYTE)PopWord();
+    memset((char *)TempBuf,0,TEMP_BUF_LEN);
+    sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[7]]);
+	LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL8_MODETXT, TempBuf, 16);
+}
 
 // 获取修改后的时间
 void GetInputTime()
@@ -406,11 +481,29 @@ void ReadReg()
         case REG_SP_ADDR:   SysParam.Address    = (BYTE)PopWord();         break; //   0x4008
         case REG_SP_TIME:   SysParam.SampTime   = PopWord();               break; //   0x4009
         case REG_SP_VOL:    SysParam.SampVol    = ((float)PopWord())/10;   break; //   0x400A
-        case REG_SP_LIGHT:  SetBkLight(true);                               break; //   0x400B
-        case REG_SP_THRES:  SysParam.AlarmThres = (BYTE)PopWord();          break; //   0x400C
-        case REG_SP_MODE:   SetSampMode();                                  break; //   0x400D
-        case REG_CH_ONOFF:  SysParam.Enable = (BYTE)PopWord();              break;
-        case REG_SP_RET:    ModeHint(); UpdataUI(); SaveParam(); ShowDevInfo();PageSwitch = 0;            break;   // 点击参数界面返回按钮
+        case REG_SP_LIGHT:  SetBkLight(true);                              break; //   0x400B
+        case REG_SP_THRES:  SysParam.AlarmThres = (BYTE)PopWord();         break; //   0x400C
+        case REG_SP_MODE:   SetSampMode();                                 break; //   0x400D        
+        case REG_CH_ONOFF:  SysParam.Enable = (BYTE)PopWord();             break;
+        
+        case REG_SP_CHANNEL1: SysParam.Channel_SampFlowVol[0] = ((float)PopWord())/10;        break;
+        case REG_SP_CHANNEL2: SysParam.Channel_SampFlowVol[1] = ((float)PopWord())/10;        break;
+        case REG_SP_CHANNEL3: SysParam.Channel_SampFlowVol[2] = ((float)PopWord())/10;        break;
+        case REG_SP_CHANNEL4: SysParam.Channel_SampFlowVol[3] = ((float)PopWord())/10;        break;
+        case REG_SP_CHANNEL5: SysParam.Channel_SampFlowVol[4] = ((float)PopWord())/10;        break;
+        case REG_SP_CHANNEL6: SysParam.Channel_SampFlowVol[5] = ((float)PopWord())/10;        break;
+        case REG_SP_CHANNEL7: SysParam.Channel_SampFlowVol[6] = ((float)PopWord())/10;        break;
+        case REG_SP_CHANNEL8: SysParam.Channel_SampFlowVol[7] = ((float)PopWord())/10;        break;   
+        
+        case REG_SP_CHANNEL1_MODE:	SetChannel1Mode();		break;
+        case REG_SP_CHANNEL2_MODE:	SetChannel2Mode();		break;
+        case REG_SP_CHANNEL3_MODE:	SetChannel3Mode();		break;
+        case REG_SP_CHANNEL4_MODE:	SetChannel4Mode();		break;
+        case REG_SP_CHANNEL5_MODE:	SetChannel5Mode();		break;
+        case REG_SP_CHANNEL6_MODE:	SetChannel6Mode();		break;
+        case REG_SP_CHANNEL7_MODE:	SetChannel7Mode();		break;
+        case REG_SP_CHANNEL8_MODE:	SetChannel8Mode();      break;
+		case REG_SP_RET:    ModeHint(); UpdataUI(); SaveParam(); ShowDevInfo();PageSwitch = 0;   break;   // 点击参数界面返回按钮
         
         // 修改时间
         case REG_ADJ_TIME:   GetInputTime();    break;    // 时间修改完成，点击了返回按钮
@@ -423,19 +516,11 @@ void ReadReg()
         case REG_IO_YELLOW:  g_Output[LIGHT_YELLOW]  = (BYTE)PopWord();  ShowTemp(TEMPER_Val);    break; // 0x5002
         case REG_IO_SOUND:   g_Output[ALARM_SOUND]  = (BYTE)PopWord();   ShowTemp(TEMPER_Val);    break; // 0x5004
         case REG_IO_FAN:     ((BYTE)PopWord())?FANS_M(1):FANS_M(0);      ShowTemp(TEMPER_Val);    break; // 0x5005
-//        case REG_IO_VALVE0:  ((BYTE)PopWord())?VALVE0(1):VALVE0(0);      ShowTemp(TEMPER_Val);    break; // 0x5008
-//        case REG_IO_VALVE1:  ((BYTE)PopWord())?VALVE1(1):VALVE1(0);      ShowTemp(TEMPER_Val);    break; // 0x5009
-//        case REG_IO_VALVE2:  ((BYTE)PopWord())?VALVE2(1):VALVE2(0);      ShowTemp(TEMPER_Val);    break; // 0x500A
-//        case REG_IO_VALVE3:  ((BYTE)PopWord())?VALVE3(1):VALVE3(0);       ShowTemp(TEMPER_Val);    break; // 0x500B
-//        case REG_IO_VALVE4:  ((BYTE)PopWord())?VALVE4(1):VALVE4(0);       ShowTemp(TEMPER_Val);    break; // 0x500C
-//        case REG_IO_VALVE5:  ((BYTE)PopWord())?VALVE5(1):VALVE5(0);       ShowTemp(TEMPER_Val);    break; // 0x500D
-//        case REG_IO_VALVE6:  ((BYTE)PopWord())?VALVE6(1):VALVE6(0);       ShowTemp(TEMPER_Val);    break; // 0x500E
-//        case REG_IO_VALVE7:  ((BYTE)PopWord())?VALVE7(1):VALVE7(0);       ShowTemp(TEMPER_Val);    break; // 0x500F
+
         // 关于界面
         // case REG_CH_COUNT:  SetChCount();  break;  // 取消了，改到参数设置界面了
         
     }
-    //RemCtlWrite();
 }
 
 

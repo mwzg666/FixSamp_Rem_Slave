@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>PileCore</TargetName>
+      <TargetName>FixSamp8</TargetName>
       <ToolsetNumber>0x1</ToolsetNumber>
       <ToolsetName>MCS-251</ToolsetName>
       <uAC6>0</uAC6>

@@ -9,7 +9,7 @@
 #include "ModBusHost.h"
 
 
-BYTE code VERSION = 100;  // V1.0.0
+BYTE code VERSION = 101;  // V1.0.0
 
 BYTE xdata StrTmp[64] = {0};
 //BYTE xdata Valve[8] = {0};
@@ -49,10 +49,11 @@ BYTE RemStart = 0;
 BYTE RemStop = 0;
 
 // Clear Rem ARM 
-BYTE Remchenable[CHANNLE_NUM] = {0};
-BOOL Remchflag[CHANNLE_NUM] = {0};
+BYTE xdata Remchenable[CHANNLE_NUM] = {0};
+BOOL xdata Remchflag[CHANNLE_NUM] = {0};
 WORD Remchtim = 0;
 BOOL ValveIOFlag = false;
+BYTE ChannelStop = 0;
 
 u16  Timer0Cnt = 0;
 
@@ -465,6 +466,7 @@ void TimerTask()
 
         RunLed(delta);
         IoCtlTask();
+		
         GetValve();
         if(SysParam.RemCtlFlag)
         {
@@ -736,12 +738,16 @@ void ParamDef()
     for (i=0;i<CHANNLE_NUM;i++)
     {
         SysParam.SampFlow[i] = 35;
+        SysParam.Channel_SampMode[i] = MODE_NOCHANNEL;
+        SysParam.Channel_SampFlowVol[i] = 2;
     }
 
-    SysParam.Enable = 0x1F;
-    RemRunStatus.RemRun = false;
+    SysParam.Enable = 0x00;
+    SysParam.ChModeCtl = 0x00;
+	SysParam.RemCtlFlag = false;
+    RemRunStatus.RemRun = false; 
     RemRunStatus.HostRun = true;
-
+	ChannelStop = 0;
 }
 
 void SaveParam()
@@ -780,6 +786,8 @@ void InitLcd()
     Delay(200);
     SendParam();
     Delay(200);
+	SendChannelParam();
+	Delay(200);
     SetBkLight(false);
     Delay(200);
     ShowDevInfo();
@@ -825,6 +833,7 @@ void StartSamp()
     memset(&RunStatus, 0, sizeof(RUN_STATUS));
     memset(&RunInfo, 0, sizeof(RUN_INFO));
     memset(&RealFlow, 0, sizeof(RealFlow));
+    SysParam.ChModeCtl = 0x00;
     RemRunStatus.HostRun = true;
     RunStatus.Running = true;
     g_Output[LIGHT_BLUE] = 1;
@@ -847,7 +856,7 @@ void StopSamp(bool Auto)
     BYTE i = 0;
     ClosePump();
     memset(RealFlow,0, sizeof(RealFlow));
-
+	ChannelStop = 0;
     RunStatus.Running = false;
     g_Output[LIGHT_BLUE] = 0;
     g_Output[LIGHT_YELLOW] = 0; 
@@ -865,44 +874,152 @@ void StopSamp(bool Auto)
     {
         // 显示取样结束提示框
         ShowModule(MP_HINT_END, REG_HINT_END);
+		//Delay(200);
+    }
+	SaveParam();
+}
+
+
+void CheckModeStop()
+{
+	BYTE i = 0;
+	static BYTE sta = 0; 
+    if(SysParam.Enable == 0)
+    {
+        RemRunStatus.HostRun = false;
+        if(SysParam.RemCtlFlag)
+        {
+            StopSamp(false);
+        }
+        else
+        {
+            StopSamp(true);
+        }
     }
 }
 
 // 定时模式
 void TimingMode()
 {
-    if (RunStatus.RunTime >= ((DWORD)SysParam.SampTime) * 60)
+    BYTE i = 0,j = 0;
+    for(i = 0;i<CHANNLE_NUM;i++)
     {
-        RemRunStatus.HostRun = false;
-        if(SysParam.RemCtlFlag)
+       
+        if(SysParam.Channel_SampMode[i] == MODE_VOL)
         {
-            StopSamp(false);
+            if(RunStatus.Volume[i] >= (SysParam.Channel_SampFlowVol[i]))
+            {
+             	if(!SysParam.RemCtlFlag)
+			    {
+			        SysParam.Enable &= ~(1<<i);   
+			    }               
+                SysParam.ChModeCtl |= (1<<i);
+				
+            }
         }
-        else
+        else if(SysParam.Channel_SampMode[i] == MODE_TIME)
         {
-            StopSamp(true);
+            if (RunStatus.RunTime[i] >= ((DWORD)SysParam.Channel_SampFlowVol[i]) * 60)
+            {
+           	 	if(!SysParam.RemCtlFlag)
+			    {
+                	SysParam.Enable &= ~(1<<i);
+           	 	}
+                SysParam.ChModeCtl |= (1<<i);
+            }
         }
-        
+		else
+        {
+            if (RunStatus.RunTime[8] >= ((DWORD)SysParam.SampTime) * 60)
+            {
+                if(!SysParam.RemCtlFlag)
+			    {
+                	SysParam.Enable &= ~(1<<i);
+           	 	}
+                SysParam.ChModeCtl |= (1<<i);
+
+            }
+        }
     }
+    CheckModeStop();
+}
+
+void Channel_ManMode()
+{
+    BYTE i = 0;
+    for(i = 0;i<CHANNLE_NUM;i++)
+    {
+        if(SysParam.Channel_SampMode[i] == MODE_VOL)
+        {
+            if(RunStatus.Volume[i] >= (SysParam.Channel_SampFlowVol[i]))
+            {
+                if(!SysParam.RemCtlFlag)
+			    {
+                	SysParam.Enable &= ~(1<<i);
+           	 	}
+                SysParam.ChModeCtl |= (1<<i);
+            }
+        }
+        else if(SysParam.Channel_SampMode[i] == MODE_TIME)
+        {
+            if (RunStatus.RunTime[8] >= ((DWORD)SysParam.Channel_SampFlowVol[i]) * 60)
+            {
+                if(!SysParam.RemCtlFlag)
+			    {
+                	SysParam.Enable &= ~(1<<i);
+           	 	}
+                SysParam.ChModeCtl |= (1<<i);
+            }
+        }
+    }
+    CheckModeStop();
 }
 
 // 定量模式
 void VolumeMode()
 {
-    if (RunStatus.TotleVol >= SysParam.SampVol)
+    BYTE i = 0,j = 0;
+    for(i = 0;i<CHANNLE_NUM;i++)
     {
-        RemRunStatus.HostRun = false;
-        if(SysParam.RemCtlFlag)
+        
+        if(SysParam.Channel_SampMode[i] == MODE_VOL)
         {
-            StopSamp(false);
+            if(RunStatus.Volume[i] >= (SysParam.Channel_SampFlowVol[i]))
+            {
+                if(!SysParam.RemCtlFlag)
+			    {
+                	SysParam.Enable &= ~(1<<i);
+           	 	}
+                SysParam.ChModeCtl |= (1<<i);
+            }
         }
-        else
+        else if(SysParam.Channel_SampMode[i] == MODE_TIME)
         {
-            StopSamp(true);
+            if (RunStatus.RunTime[i] >= ((DWORD)SysParam.Channel_SampFlowVol[i]) * 60)
+            {
+                if(!SysParam.RemCtlFlag)
+			    {
+                	SysParam.Enable &= ~(1<<i);
+           	 	}
+                SysParam.ChModeCtl |= (1<<i);
+            }
         }
-
+		else
+        {
+        	//ChannelStop |= (1<<i);
+            if (RunStatus.Volume[i] >= SysParam.SampVol)
+            {
+                if(!SysParam.RemCtlFlag)
+			    {
+                	SysParam.Enable &= ~(1<<i);
+           	 	}
+                SysParam.ChModeCtl |= (1<<i);
+            }
+        }
     }
+    CheckModeStop();
 }
+
 
 void RunCheck()
 {
@@ -910,7 +1027,13 @@ void RunCheck()
     {
         case MODE_TIME:  TimingMode();  break;
         case MODE_VOL:   VolumeMode();  break;
+        default: Channel_ManMode();break;
     }
+	//Delay(200);
+	SendParam();
+	
+//	SendChannelParam();
+//	Delay(200);
 }
 
 void AbnorAlaerm()
@@ -1017,23 +1140,35 @@ void CheckAlarm()
 // 1秒运行一次
 void DevRun()
 {
-    RunStatus.RunTime ++;
+    BYTE i = 0;
+    RunStatus.RunTime[8] ++;
+    for(i = 0;i<CHANNLE_NUM;i++)
+    {
+        if(SysParam.Enable &(1<<i))
+        {
+            RunStatus.RunTime[i] ++;
+        }
+    }
     
     // 1. 获取流量
     GetFlow();
 
     // 2. 显示流量和状态
     ShowFlow();
-    
+
+	// 4. 根据模式判断是否结束取样
+    RunCheck();
+	
     // 3. 检查报警状态  
-    if (RunStatus.RunTime > 10)
+    if (RunStatus.RunTime[8] > 10)
     {
         // 运行时间大于10秒才检测
         CheckAlarm();
     }
     
-    // 4. 根据模式判断是否结束取样
-    RunCheck();
+
+//	SendParam();
+//	SendChannelParam();
 }
 
 
@@ -1046,10 +1181,13 @@ void GetValve()
         if(SysParam.Enable & (1<<i))
         {
             RemChStatus[i] = 1;
+           
         }
         else
         {
-            RemChStatus[i] = 0;
+            RemChStatus[i] = 0; 
+            RunStatus.RunTime[i] = 0;
+			RealFlow[i].Totol = 0;
         }
         if(SysParam.RemCtlFlag)
         {
@@ -1164,6 +1302,7 @@ void SyncModBusDev()
     BYTE i;
     memset(&ModBusParam, 0, sizeof(MODBUS_PARAM));
     ModBusParam.Addr = RemRegAddr.SypAddr;
+    ModBusParam.ChModeCtl = SysParam.ChModeCtl;
     ModBusParam.RunStatus = RemRunStatus.HostRun;
     for(i = 0;i < 8;i++)    
     {
@@ -1218,6 +1357,7 @@ void RemPageCtl()
                 memset(&RunStatus, 0, sizeof(RUN_STATUS));
                 StopSamp(false);
                 SendParam();
+				//SendChannelParam();
                 ModeHint(); 
                 
                 RemStop++;
@@ -1237,11 +1377,12 @@ void RemPageCtl()
         {   
             RemPage = 0; 
             RemRunStatus.RemRun = false;
+            SysParam.ChModeCtl = 0x00;
             
             ClosePump();
             memset(&RunStatus, 0, sizeof(RUN_STATUS));
             memset(RealFlow,0, sizeof(RealFlow));
-            for (i=0;i<CHANNLE_NUM;i++)
+            for(i=0;i<CHANNLE_NUM;i++)
             {
                 ChannelAlarm[i] = ((SysParam.Enable & (1<<i)) == 0)?0:1;
             }
@@ -1249,6 +1390,7 @@ void RemPageCtl()
             g_Output[LIGHT_BLUE] = 0; 
             g_Output[LIGHT_YELLOW] = 0;
             SendParam();
+			//SendChannelParam();
             ModeHint(); 
             EnterPage(PAGE_START);
         } 
@@ -1491,8 +1633,7 @@ void main(void)
     {
         TimerTask();
         HndInput();
-       
-        
+      
         Uart1Hnd();
         Uart2Hnd();
         Uart3Hnd(); 
