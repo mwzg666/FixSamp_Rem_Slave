@@ -1,4 +1,4 @@
-C251 COMPILER V5.60.0,  LcdApp                                                             22/05/24  17:23:31  PAGE 1   
+C251 COMPILER V5.60.0,  LcdApp                                                             30/05/24  09:54:01  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE LcdApp
@@ -66,7 +66,7 @@ stmt  level    source
    56   1          for (i=0;i<8;i++)
    57   1          {
    58   2              if (SysParam.Enable & (1<<i))
-C251 COMPILER V5.60.0,  LcdApp                                                             22/05/24  17:23:31  PAGE 2   
+C251 COMPILER V5.60.0,  LcdApp                                                             30/05/24  09:54:01  PAGE 2   
 
    59   2              {
    60   3                  Cnt ++;
@@ -134,7 +134,7 @@ stmt  level    source
   122   2              return;
   123   2          }
   124   1      
-C251 COMPILER V5.60.0,  LcdApp                                                             22/05/24  17:23:31  PAGE 3   
+C251 COMPILER V5.60.0,  LcdApp                                                             30/05/24  09:54:01  PAGE 3   
 
   125   1          dat = PopWord();
   126   1          if (dat == 0x31)    // 返回确认
@@ -202,7 +202,7 @@ stmt  level    source
   188   1          {
   189   2              StopSamp(false);
   190   2              
-C251 COMPILER V5.60.0,  LcdApp                                                             22/05/24  17:23:31  PAGE 4   
+C251 COMPILER V5.60.0,  LcdApp                                                             30/05/24  09:54:01  PAGE 4   
 
   191   2          }
   192   1      
@@ -270,7 +270,7 @@ stmt  level    source
   254   3                  case ALM_CH_DISABLE:  sprintf(&ChannelStatus[i][0],"禁用");               break;
   255   3                  case ALM_FLOW_NOR:    sprintf(&ChannelStatus[i][0],"正\xfd常\xfd");       break;
   256   3                  case ALM_FLOW_LOW:    sprintf(&ChannelStatus[i][0],"流量偏小");             break;
-C251 COMPILER V5.60.0,  LcdApp                                                             22/05/24  17:23:31  PAGE 5   
+C251 COMPILER V5.60.0,  LcdApp                                                             30/05/24  09:54:01  PAGE 5   
 
   257   3                  case ALM_FLOW_HIGH:   sprintf(&ChannelStatus[i][0],"流量偏大");             break;
   258   3                  case ALM_FLOW_ABNOR:  sprintf(&ChannelStatus[i][0],"通信异常");             break;
@@ -331,14 +331,14 @@ stmt  level    source
   313   1          for (i=0;i<CHANNLE_NUM;i++)
   314   1          {
   315   2              
-  316   2                      memset(ChannelParam.ChannelModeTxt[i],0,16);
+  316   2              memset(ChannelParam.ChannelModeTxt[i],0,16);
   317   2              ChannelParam.ChannelMode[i] = SwWord((WORD)(SysParam.Channel_SampMode[i]));
   318   2              
   319   2              ChannelParam.ChannelParm[i] = SwWord((WORD)(SysParam.Channel_SampFlowVol[i]*10));
-  320   2                      
+  320   2              
   321   2              sprintf(ChannelParam.ChannelModeTxt[i], ModeText[SysParam.Channel_SampMode[i]]);
   322   2          }
-C251 COMPILER V5.60.0,  LcdApp                                                             22/05/24  17:23:31  PAGE 6   
+C251 COMPILER V5.60.0,  LcdApp                                                             30/05/24  09:54:01  PAGE 6   
 
   323   1          LcdCmd(LCD_CMD_WRITE, REG_SYS_CHANNEL, (BYTE *)&ChannelParam, sizeof(CHANNEL_PARAM));
   324   1      }
@@ -356,65 +356,65 @@ stmt  level    source
   336          
   337          void SetChannel1Mode()
   338          {
-  339   1              SysParam.Channel_SampMode[0] = (BYTE)PopWord();
+  339   1          SysParam.Channel_SampMode[0] = (BYTE)PopWord();
   340   1          memset((char *)TempBuf,0,TEMP_BUF_LEN);
   341   1          sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[0]]);
-  342   1              LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL1_MODETXT, TempBuf, 16);
+  342   1          LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL1_MODETXT, TempBuf, 16);
   343   1      }
   344          void SetChannel2Mode()
   345          {
-  346   1              SysParam.Channel_SampMode[1] = (BYTE)PopWord();
+  346   1          SysParam.Channel_SampMode[1] = (BYTE)PopWord();
   347   1          memset((char *)TempBuf,0,TEMP_BUF_LEN);
   348   1          sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[1]]);
-  349   1              LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL2_MODETXT, TempBuf, 16);
+  349   1          LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL2_MODETXT, TempBuf, 16);
   350   1      }
   351          
   352          void SetChannel3Mode()
   353          {
-  354   1              SysParam.Channel_SampMode[2] = (BYTE)PopWord();
+  354   1          SysParam.Channel_SampMode[2] = (BYTE)PopWord();
   355   1          memset((char *)TempBuf,0,TEMP_BUF_LEN);
   356   1          sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[2]]);
-  357   1              LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL3_MODETXT, TempBuf, 16);
+  357   1          LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL3_MODETXT, TempBuf, 16);
   358   1      }
   359          void SetChannel4Mode()
   360          {
-  361   1              SysParam.Channel_SampMode[3] = (BYTE)PopWord();
+  361   1          SysParam.Channel_SampMode[3] = (BYTE)PopWord();
   362   1          memset((char *)TempBuf,0,TEMP_BUF_LEN);
   363   1          sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[3]]);
-  364   1              LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL4_MODETXT, TempBuf, 16);
+  364   1          LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL4_MODETXT, TempBuf, 16);
   365   1      }
   366          
   367          void SetChannel5Mode()
   368          {
-  369   1              SysParam.Channel_SampMode[4] = (BYTE)PopWord();
+  369   1          SysParam.Channel_SampMode[4] = (BYTE)PopWord();
   370   1          memset((char *)TempBuf,0,TEMP_BUF_LEN);
   371   1          sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[4]]);
-  372   1              LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL5_MODETXT, TempBuf, 16);
+  372   1          LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL5_MODETXT, TempBuf, 16);
   373   1      }
   374          void SetChannel6Mode()
   375          {
-  376   1              SysParam.Channel_SampMode[5] = (BYTE)PopWord();
+  376   1          SysParam.Channel_SampMode[5] = (BYTE)PopWord();
   377   1          memset((char *)TempBuf,0,TEMP_BUF_LEN);
   378   1          sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[5]]);
-  379   1              LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL6_MODETXT, TempBuf, 16);
+  379   1          LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL6_MODETXT, TempBuf, 16);
   380   1      }
   381          
   382          void SetChannel7Mode()
   383          {
-  384   1              SysParam.Channel_SampMode[6] = (BYTE)PopWord();
+  384   1          SysParam.Channel_SampMode[6] = (BYTE)PopWord();
   385   1          memset((char *)TempBuf,0,TEMP_BUF_LEN);
   386   1          sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[6]]);
-  387   1              LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL7_MODETXT, TempBuf, 16);
+  387   1          LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL7_MODETXT, TempBuf, 16);
   388   1      }
-C251 COMPILER V5.60.0,  LcdApp                                                             22/05/24  17:23:31  PAGE 7   
+C251 COMPILER V5.60.0,  LcdApp                                                             30/05/24  09:54:01  PAGE 7   
 
   389          
   390          void SetChannel8Mode()
   391          {
-  392   1              SysParam.Channel_SampMode[7] = (BYTE)PopWord();
+  392   1          SysParam.Channel_SampMode[7] = (BYTE)PopWord();
   393   1          memset((char *)TempBuf,0,TEMP_BUF_LEN);
   394   1          sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[7]]);
-  395   1              LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL8_MODETXT, TempBuf, 16);
+  395   1          LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL8_MODETXT, TempBuf, 16);
   396   1      }
   397          
   398          // 获取修改后的时间
@@ -474,7 +474,7 @@ stmt  level    source
   452          
   453          void ReadReg()
   454          {
-C251 COMPILER V5.60.0,  LcdApp                                                             22/05/24  17:23:31  PAGE 8   
+C251 COMPILER V5.60.0,  LcdApp                                                             30/05/24  09:54:01  PAGE 8   
 
   455   1          LCD_FRAME *pFrame = (LCD_FRAME *)&RecvBuf1[LcdFrameloc];
   456   1          WORD addr = SwWord(pFrame->Addr);
@@ -519,16 +519,16 @@ stmt  level    source
   495   2              case REG_SP_CHANNEL7: SysParam.Channel_SampFlowVol[6] = ((float)PopWord())/10;        break;
   496   2              case REG_SP_CHANNEL8: SysParam.Channel_SampFlowVol[7] = ((float)PopWord())/10;        break;   
   497   2              
-  498   2              case REG_SP_CHANNEL1_MODE:      SetChannel1Mode();              break;
-  499   2              case REG_SP_CHANNEL2_MODE:      SetChannel2Mode();              break;
-  500   2              case REG_SP_CHANNEL3_MODE:      SetChannel3Mode();              break;
-  501   2              case REG_SP_CHANNEL4_MODE:      SetChannel4Mode();              break;
-  502   2              case REG_SP_CHANNEL5_MODE:      SetChannel5Mode();              break;
-  503   2              case REG_SP_CHANNEL6_MODE:      SetChannel6Mode();              break;
-  504   2              case REG_SP_CHANNEL7_MODE:      SetChannel7Mode();              break;
-  505   2              case REG_SP_CHANNEL8_MODE:      SetChannel8Mode();      break;
-  506   2                      case REG_SP_RET:    ModeHint(); UpdataUI(); SaveParam(); ShowDevInfo();PageSwitch = 0;   break;   // 点
-             -击参数界面返回按钮
+  498   2              case REG_SP_CHANNEL1_MODE:    SetChannel1Mode();        break;
+  499   2              case REG_SP_CHANNEL2_MODE:    SetChannel2Mode();        break;
+  500   2              case REG_SP_CHANNEL3_MODE:    SetChannel3Mode();        break;
+  501   2              case REG_SP_CHANNEL4_MODE:    SetChannel4Mode();        break;
+  502   2              case REG_SP_CHANNEL5_MODE:    SetChannel5Mode();        break;
+  503   2              case REG_SP_CHANNEL6_MODE:    SetChannel6Mode();        break;
+  504   2              case REG_SP_CHANNEL7_MODE:    SetChannel7Mode();        break;
+  505   2              case REG_SP_CHANNEL8_MODE:    SetChannel8Mode();      break;
+  506   2              case REG_SP_RET:    ModeHint(); UpdataUI(); SaveParam(); ShowDevInfo();PageSwitch = 0;   break;  
+             - // 点击参数界面返回按钮
   507   2              
   508   2              // 修改时间
   509   2              case REG_ADJ_TIME:   GetInputTime();    break;    // 时间修改完成，点击了返回按钮
@@ -542,7 +542,7 @@ stmt  level    source
              -// 0x5001
   516   2              case REG_IO_YELLOW:  g_Output[LIGHT_YELLOW]  = (BYTE)PopWord();  ShowTemp(TEMPER_Val);    break; 
              -// 0x5002
-C251 COMPILER V5.60.0,  LcdApp                                                             22/05/24  17:23:31  PAGE 9   
+C251 COMPILER V5.60.0,  LcdApp                                                             30/05/24  09:54:01  PAGE 9   
 
   517   2              case REG_IO_SOUND:   g_Output[ALARM_SOUND]  = (BYTE)PopWord();   ShowTemp(TEMPER_Val);    break; 
              -// 0x5004
@@ -575,7 +575,7 @@ Module Information          Static   Overlayable
   data size            =    ------     ------
   idata size           =    ------     ------
   pdata size           =    ------     ------
-  xdata size           =       568     ------
+  xdata size           =       572     ------
   xdata-const size     =    ------     ------
   edata size           =        87     ------
   bit size             =    ------     ------

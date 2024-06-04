@@ -313,12 +313,12 @@ void SendChannelParam()
     for (i=0;i<CHANNLE_NUM;i++)
     {
         
-		memset(ChannelParam.ChannelModeTxt[i],0,16);
+        memset(ChannelParam.ChannelModeTxt[i],0,16);
         ChannelParam.ChannelMode[i] = SwWord((WORD)(SysParam.Channel_SampMode[i]));
         
         ChannelParam.ChannelParm[i] = SwWord((WORD)(SysParam.Channel_SampFlowVol[i]*10));
-		
-    	sprintf(ChannelParam.ChannelModeTxt[i], ModeText[SysParam.Channel_SampMode[i]]);
+        
+        sprintf(ChannelParam.ChannelModeTxt[i], ModeText[SysParam.Channel_SampMode[i]]);
     }
     LcdCmd(LCD_CMD_WRITE, REG_SYS_CHANNEL, (BYTE *)&ChannelParam, sizeof(CHANNEL_PARAM));
 }
@@ -336,63 +336,63 @@ void SetSampMode()
 
 void SetChannel1Mode()
 {
-	SysParam.Channel_SampMode[0] = (BYTE)PopWord();
+    SysParam.Channel_SampMode[0] = (BYTE)PopWord();
     memset((char *)TempBuf,0,TEMP_BUF_LEN);
     sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[0]]);
-	LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL1_MODETXT, TempBuf, 16);
+    LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL1_MODETXT, TempBuf, 16);
 }
 void SetChannel2Mode()
 {
-	SysParam.Channel_SampMode[1] = (BYTE)PopWord();
+    SysParam.Channel_SampMode[1] = (BYTE)PopWord();
     memset((char *)TempBuf,0,TEMP_BUF_LEN);
     sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[1]]);
-	LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL2_MODETXT, TempBuf, 16);
+    LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL2_MODETXT, TempBuf, 16);
 }
 
 void SetChannel3Mode()
 {
-	SysParam.Channel_SampMode[2] = (BYTE)PopWord();
+    SysParam.Channel_SampMode[2] = (BYTE)PopWord();
     memset((char *)TempBuf,0,TEMP_BUF_LEN);
     sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[2]]);
-	LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL3_MODETXT, TempBuf, 16);
+    LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL3_MODETXT, TempBuf, 16);
 }
 void SetChannel4Mode()
 {
-	SysParam.Channel_SampMode[3] = (BYTE)PopWord();
+    SysParam.Channel_SampMode[3] = (BYTE)PopWord();
     memset((char *)TempBuf,0,TEMP_BUF_LEN);
     sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[3]]);
-	LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL4_MODETXT, TempBuf, 16);
+    LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL4_MODETXT, TempBuf, 16);
 }
 
 void SetChannel5Mode()
 {
-	SysParam.Channel_SampMode[4] = (BYTE)PopWord();
+    SysParam.Channel_SampMode[4] = (BYTE)PopWord();
     memset((char *)TempBuf,0,TEMP_BUF_LEN);
     sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[4]]);
-	LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL5_MODETXT, TempBuf, 16);
+    LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL5_MODETXT, TempBuf, 16);
 }
 void SetChannel6Mode()
 {
-	SysParam.Channel_SampMode[5] = (BYTE)PopWord();
+    SysParam.Channel_SampMode[5] = (BYTE)PopWord();
     memset((char *)TempBuf,0,TEMP_BUF_LEN);
     sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[5]]);
-	LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL6_MODETXT, TempBuf, 16);
+    LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL6_MODETXT, TempBuf, 16);
 }
 
 void SetChannel7Mode()
 {
-	SysParam.Channel_SampMode[6] = (BYTE)PopWord();
+    SysParam.Channel_SampMode[6] = (BYTE)PopWord();
     memset((char *)TempBuf,0,TEMP_BUF_LEN);
     sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[6]]);
-	LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL7_MODETXT, TempBuf, 16);
+    LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL7_MODETXT, TempBuf, 16);
 }
 
 void SetChannel8Mode()
 {
-	SysParam.Channel_SampMode[7] = (BYTE)PopWord();
+    SysParam.Channel_SampMode[7] = (BYTE)PopWord();
     memset((char *)TempBuf,0,TEMP_BUF_LEN);
     sprintf((char *)TempBuf, ModeText[SysParam.Channel_SampMode[7]]);
-	LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL8_MODETXT, TempBuf, 16);
+    LcdCmd(LCD_CMD_WRITE, REG_SP_CHANNEL8_MODETXT, TempBuf, 16);
 }
 
 // 获取修改后的时间
@@ -495,15 +495,15 @@ void ReadReg()
         case REG_SP_CHANNEL7: SysParam.Channel_SampFlowVol[6] = ((float)PopWord())/10;        break;
         case REG_SP_CHANNEL8: SysParam.Channel_SampFlowVol[7] = ((float)PopWord())/10;        break;   
         
-        case REG_SP_CHANNEL1_MODE:	SetChannel1Mode();		break;
-        case REG_SP_CHANNEL2_MODE:	SetChannel2Mode();		break;
-        case REG_SP_CHANNEL3_MODE:	SetChannel3Mode();		break;
-        case REG_SP_CHANNEL4_MODE:	SetChannel4Mode();		break;
-        case REG_SP_CHANNEL5_MODE:	SetChannel5Mode();		break;
-        case REG_SP_CHANNEL6_MODE:	SetChannel6Mode();		break;
-        case REG_SP_CHANNEL7_MODE:	SetChannel7Mode();		break;
-        case REG_SP_CHANNEL8_MODE:	SetChannel8Mode();      break;
-		case REG_SP_RET:    ModeHint(); UpdataUI(); SaveParam(); ShowDevInfo();PageSwitch = 0;   break;   // 点击参数界面返回按钮
+        case REG_SP_CHANNEL1_MODE:    SetChannel1Mode();        break;
+        case REG_SP_CHANNEL2_MODE:    SetChannel2Mode();        break;
+        case REG_SP_CHANNEL3_MODE:    SetChannel3Mode();        break;
+        case REG_SP_CHANNEL4_MODE:    SetChannel4Mode();        break;
+        case REG_SP_CHANNEL5_MODE:    SetChannel5Mode();        break;
+        case REG_SP_CHANNEL6_MODE:    SetChannel6Mode();        break;
+        case REG_SP_CHANNEL7_MODE:    SetChannel7Mode();        break;
+        case REG_SP_CHANNEL8_MODE:    SetChannel8Mode();      break;
+        case REG_SP_RET:    ModeHint(); UpdataUI(); SaveParam(); ShowDevInfo();PageSwitch = 0;   break;   // 点击参数界面返回按钮
         
         // 修改时间
         case REG_ADJ_TIME:   GetInputTime();    break;    // 时间修改完成，点击了返回按钮

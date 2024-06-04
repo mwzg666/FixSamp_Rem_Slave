@@ -55,7 +55,7 @@
 #define REG_SP_CHANNEL7  0x4036
 #define REG_SP_CHANNEL8  0x4037
 
-#define REG_SP_CHANNEL1_MODE	0x4038	// 各通道下拉菜单
+#define REG_SP_CHANNEL1_MODE    0x4038    // 各通道下拉菜单
 #define REG_SP_CHANNEL2_MODE 0x4039
 #define REG_SP_CHANNEL3_MODE 0x403A
 #define REG_SP_CHANNEL4_MODE 0x403B
@@ -64,14 +64,14 @@
 #define REG_SP_CHANNEL7_MODE 0x403E
 #define REG_SP_CHANNEL8_MODE 0x403F
 
-#define  REG_SP_CHANNEL1_MODETXT   	0x4040	// 各通道显示取样模式
-#define  REG_SP_CHANNEL2_MODETXT	0x4048
-#define  REG_SP_CHANNEL3_MODETXT	0x4050
-#define  REG_SP_CHANNEL4_MODETXT	0x4058
-#define  REG_SP_CHANNEL5_MODETXT	0x4060
-#define  REG_SP_CHANNEL6_MODETXT	0x4068
-#define  REG_SP_CHANNEL7_MODETXT	0x4070
-#define  REG_SP_CHANNEL8_MODETXT	0x4078
+#define  REG_SP_CHANNEL1_MODETXT       0x4040    // 各通道显示取样模式
+#define  REG_SP_CHANNEL2_MODETXT    0x4048
+#define  REG_SP_CHANNEL3_MODETXT    0x4050
+#define  REG_SP_CHANNEL4_MODETXT    0x4058
+#define  REG_SP_CHANNEL5_MODETXT    0x4060
+#define  REG_SP_CHANNEL6_MODETXT    0x4068
+#define  REG_SP_CHANNEL7_MODETXT    0x4070
+#define  REG_SP_CHANNEL8_MODETXT    0x4078
 
 
 #define REG_SP_VALVE1  0x4500       //远程控制显示(8个通道)
@@ -147,7 +147,7 @@ typedef struct
 
 typedef struct
 {
-	WORD ChannelParm[CHANNLE_NUM];
+    WORD ChannelParm[CHANNLE_NUM];
     WORD ChannelMode[8];
     char ChannelModeTxt[8][16];
 }CHANNEL_PARAM;
@@ -166,6 +166,7 @@ typedef struct
 typedef struct
 {
     char DevType[16];
+    WORD res[2];
     char SoftVer[16];
 }DEV_INFO;
 #pragma pack()

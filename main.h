@@ -47,7 +47,7 @@ typedef     unsigned int    uint;
 
 #include "uart.h"
 #include "EepRom.h"
-#include "MwPro.h"
+//#include "MwPro.h"
 #include "LcdApp.h"
 #include "ModBus.h"
 

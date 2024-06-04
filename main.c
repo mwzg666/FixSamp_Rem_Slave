@@ -1,5 +1,4 @@
 #include "main.h"
-#include "mcp4725.h"
 #include "Lcd.h"
 #include "LcdApp.h"
 #include "ModBus.h"
@@ -466,7 +465,7 @@ void TimerTask()
 
         RunLed(delta);
         IoCtlTask();
-		
+        
         GetValve();
         if(SysParam.RemCtlFlag)
         {
@@ -744,10 +743,10 @@ void ParamDef()
 
     SysParam.Enable = 0x00;
     SysParam.ChModeCtl = 0x00;
-	SysParam.RemCtlFlag = false;
+    SysParam.RemCtlFlag = false;
     RemRunStatus.RemRun = false; 
     RemRunStatus.HostRun = true;
-	ChannelStop = 0;
+    ChannelStop = 0;
 }
 
 void SaveParam()
@@ -786,8 +785,8 @@ void InitLcd()
     Delay(200);
     SendParam();
     Delay(200);
-	SendChannelParam();
-	Delay(200);
+    SendChannelParam();
+    Delay(200);
     SetBkLight(false);
     Delay(200);
     ShowDevInfo();
@@ -856,7 +855,7 @@ void StopSamp(bool Auto)
     BYTE i = 0;
     ClosePump();
     memset(RealFlow,0, sizeof(RealFlow));
-	ChannelStop = 0;
+    ChannelStop = 0;
     RunStatus.Running = false;
     g_Output[LIGHT_BLUE] = 0;
     g_Output[LIGHT_YELLOW] = 0; 
@@ -874,16 +873,16 @@ void StopSamp(bool Auto)
     {
         // 显示取样结束提示框
         ShowModule(MP_HINT_END, REG_HINT_END);
-		//Delay(200);
+        //Delay(200);
     }
-	SaveParam();
+    SaveParam();
 }
 
 
 void CheckModeStop()
 {
-	BYTE i = 0;
-	static BYTE sta = 0; 
+    BYTE i = 0;
+    static BYTE sta = 0; 
     if(SysParam.Enable == 0)
     {
         RemRunStatus.HostRun = false;
@@ -909,33 +908,33 @@ void TimingMode()
         {
             if(RunStatus.Volume[i] >= (SysParam.Channel_SampFlowVol[i]))
             {
-             	if(!SysParam.RemCtlFlag)
-			    {
-			        SysParam.Enable &= ~(1<<i);   
-			    }               
+                 if(!SysParam.RemCtlFlag)
+                {
+                    SysParam.Enable &= ~(1<<i);   
+                }               
                 SysParam.ChModeCtl |= (1<<i);
-				
+                
             }
         }
         else if(SysParam.Channel_SampMode[i] == MODE_TIME)
         {
-            if (RunStatus.RunTime[i] >= ((DWORD)SysParam.Channel_SampFlowVol[i]) * 60)
+            if (RunStatus.RunTime[i] >= (SysParam.Channel_SampFlowVol[i]) * 60)
             {
-           	 	if(!SysParam.RemCtlFlag)
-			    {
-                	SysParam.Enable &= ~(1<<i);
-           	 	}
+                    if(!SysParam.RemCtlFlag)
+                {
+                    SysParam.Enable &= ~(1<<i);
+                    }
                 SysParam.ChModeCtl |= (1<<i);
             }
         }
-		else
+        else
         {
             if (RunStatus.RunTime[8] >= ((DWORD)SysParam.SampTime) * 60)
             {
                 if(!SysParam.RemCtlFlag)
-			    {
-                	SysParam.Enable &= ~(1<<i);
-           	 	}
+                {
+                    SysParam.Enable &= ~(1<<i);
+                    }
                 SysParam.ChModeCtl |= (1<<i);
 
             }
@@ -954,20 +953,20 @@ void Channel_ManMode()
             if(RunStatus.Volume[i] >= (SysParam.Channel_SampFlowVol[i]))
             {
                 if(!SysParam.RemCtlFlag)
-			    {
-                	SysParam.Enable &= ~(1<<i);
-           	 	}
+                {
+                    SysParam.Enable &= ~(1<<i);
+                    }
                 SysParam.ChModeCtl |= (1<<i);
             }
         }
         else if(SysParam.Channel_SampMode[i] == MODE_TIME)
         {
-            if (RunStatus.RunTime[8] >= ((DWORD)SysParam.Channel_SampFlowVol[i]) * 60)
+            if (RunStatus.RunTime[8] >= (SysParam.Channel_SampFlowVol[i]) * 60)
             {
                 if(!SysParam.RemCtlFlag)
-			    {
-                	SysParam.Enable &= ~(1<<i);
-           	 	}
+                {
+                    SysParam.Enable &= ~(1<<i);
+                    }
                 SysParam.ChModeCtl |= (1<<i);
             }
         }
@@ -987,32 +986,32 @@ void VolumeMode()
             if(RunStatus.Volume[i] >= (SysParam.Channel_SampFlowVol[i]))
             {
                 if(!SysParam.RemCtlFlag)
-			    {
-                	SysParam.Enable &= ~(1<<i);
-           	 	}
+                {
+                    SysParam.Enable &= ~(1<<i);
+                    }
                 SysParam.ChModeCtl |= (1<<i);
             }
         }
         else if(SysParam.Channel_SampMode[i] == MODE_TIME)
         {
-            if (RunStatus.RunTime[i] >= ((DWORD)SysParam.Channel_SampFlowVol[i]) * 60)
+            if (RunStatus.RunTime[i] >= (SysParam.Channel_SampFlowVol[i]) * 60)
             {
                 if(!SysParam.RemCtlFlag)
-			    {
-                	SysParam.Enable &= ~(1<<i);
-           	 	}
+                {
+                    SysParam.Enable &= ~(1<<i);
+                    }
                 SysParam.ChModeCtl |= (1<<i);
             }
         }
-		else
+        else
         {
-        	//ChannelStop |= (1<<i);
+            //ChannelStop |= (1<<i);
             if (RunStatus.Volume[i] >= SysParam.SampVol)
             {
                 if(!SysParam.RemCtlFlag)
-			    {
-                	SysParam.Enable &= ~(1<<i);
-           	 	}
+                {
+                    SysParam.Enable &= ~(1<<i);
+                    }
                 SysParam.ChModeCtl |= (1<<i);
             }
         }
@@ -1029,11 +1028,11 @@ void RunCheck()
         case MODE_VOL:   VolumeMode();  break;
         default: Channel_ManMode();break;
     }
-	//Delay(200);
-	SendParam();
-	
-//	SendChannelParam();
-//	Delay(200);
+    //Delay(200);
+    SendParam();
+    
+//    SendChannelParam();
+//    Delay(200);
 }
 
 void AbnorAlaerm()
@@ -1156,9 +1155,9 @@ void DevRun()
     // 2. 显示流量和状态
     ShowFlow();
 
-	// 4. 根据模式判断是否结束取样
+    // 4. 根据模式判断是否结束取样
     RunCheck();
-	
+    
     // 3. 检查报警状态  
     if (RunStatus.RunTime[8] > 10)
     {
@@ -1167,8 +1166,8 @@ void DevRun()
     }
     
 
-//	SendParam();
-//	SendChannelParam();
+//    SendParam();
+//    SendChannelParam();
 }
 
 
@@ -1187,7 +1186,7 @@ void GetValve()
         {
             RemChStatus[i] = 0; 
             RunStatus.RunTime[i] = 0;
-			RealFlow[i].Totol = 0;
+            RealFlow[i].Totol = 0;
         }
         if(SysParam.RemCtlFlag)
         {
@@ -1357,7 +1356,7 @@ void RemPageCtl()
                 memset(&RunStatus, 0, sizeof(RUN_STATUS));
                 StopSamp(false);
                 SendParam();
-				//SendChannelParam();
+                //SendChannelParam();
                 ModeHint(); 
                 
                 RemStop++;
@@ -1390,7 +1389,7 @@ void RemPageCtl()
             g_Output[LIGHT_BLUE] = 0; 
             g_Output[LIGHT_YELLOW] = 0;
             SendParam();
-			//SendChannelParam();
+            //SendChannelParam();
             ModeHint(); 
             EnterPage(PAGE_START);
         } 
